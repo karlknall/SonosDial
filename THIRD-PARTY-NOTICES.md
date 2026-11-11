@@ -5,7 +5,7 @@ This is a component-specific license mapping, not a blanket MIT license.
 | Component | License and supplied material |
 |---|---|
 | SonosDial Windows assistant (app.py/device.py/i18n.py) | GPL-3.0-or-later; licenses/GPL-3.0.txt; source and build scripts included |
-| Own firmware application, documentation and other own helper scripts | MIT; licenses/MIT-SonosDial.txt |
+| Own firmware application, original logo assets, documentation and other own helper scripts | MIT; licenses/MIT-SonosDial.txt |
 | esptool 4.8.1 | GPL-2.0-or-later; full official source under third_party/esptool-4.8.1 |
 | esptool Legacy Flasher Stub 1.3.0 | GPL-2.0-or-later; full source and original build instructions/Makefiles under third_party/esptool-legacy-flasher-stub-1.3.0 |
 | Newer esptool stub files | Apache-2.0 or MIT as stated in the corresponding upstream directory; original notices retained |
@@ -28,3 +28,5 @@ Original legal license texts are not translated or replaced by the English/Germa
 Official references: https://github.com/espressif/esptool/tree/v4.8.1 · https://github.com/espressif/esptool-legacy-flasher-stub/tree/v1.3.0 · https://github.com/espressif/arduino-esp32/tree/2.0.17 · https://github.com/espressif/esp-idf/tree/v4.4.7 . Additional SDK notice receipts are recorded in licenses/sdk-upstream/SOURCES.json.
 
 [Deutsch](docs/de/THIRD-PARTY-NOTICES.md)
+
+The full release source asset includes firmware-relink and third_party. These large inputs are omitted from the lean GitHub checkout; download SonosDial-Source-1.2.0.zip alongside the installer/firmware.

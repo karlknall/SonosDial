@@ -1,0 +1,20 @@
+# Python 3.12 x64 + Tcl/Tk. Exact versions used for the published desktop build.
+esptool==4.8.1
+pyserial==3.5
+bitstring==5.0.0
+tibs==2.0.2
+cryptography==50.0.2
+cffi==2.1.1
+pycparser==3.12
+ecdsa==0.19.2
+six==1.17.0
+reedsolo==1.7.0
+PyYAML==6.0.3
+intelhex==2.3.0
+pyinstaller==6.16.0
+pyinstaller-hooks-contrib==2026.9
+altgraph==0.17.5
+packaging==26.3
+pefile==2023.2.7
+pywin32-ctypes==0.2.3
+setuptools==84.2.1

@@ -1,0 +1,12 @@
+.pio/
+.venv/
+.build-env/
+build/
+dist/
+.test-build/
+__pycache__/
+*.pyc
+*.log
+binaries/
+firmware-relink/
+third_party/

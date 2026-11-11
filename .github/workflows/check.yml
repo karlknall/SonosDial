@@ -1,0 +1,40 @@
+name: Check SonosDial
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  firmware-and-native:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install platformio==6.2.0
+      - run: pio run
+      - name: Test input, selection, XML, framing and validation
+        shell: bash
+        run: |
+          mkdir -p .test-build
+          for suite in input selection xml framing validation; do
+            extra=()
+            if [ "$suite" = xml ]; then extra=(lib/tinyxml2/tinyxml2.cpp); fi
+            g++ -std=c++17 -Ilib/tinyxml2 "tests/${suite}_test.cpp" "${extra[@]}" -o ".test-build/$suite"
+            ".test-build/$suite"
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mini-firmware-build
+          path: |
+            .pio/build/sonosdial/firmware.bin
+            .pio/build/sonosdial/bootloader.bin
+            .pio/build/sonosdial/partitions.bin
+  windows-assistant:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r installer/requirements-build.txt
+      - run: python -m unittest discover -s tests -p "test_*.py" -v

@@ -1,72 +1,121 @@
-# SonosDial 1.0
+# SonosDial
 
-An independent, local Sonos volume controller for an **ESP32-S3 DevKitC-1 N16R8** and a **KY-040 rotary encoder**. No display or battery. Software only: no CAD or STL files.
+![SonosDial logo](assets/sonosdial-128.png)
 
-English is the main publication language. [Deutsche Anleitung](docs/de/README.md). The Windows installer and setup assistant support **English and German**. The assistant uses a saved language preference first, otherwise the Windows UI language; other Windows languages fall back to English. Change it anytime using **Language / Sprache** in the sidebar. An explicit `--lang en` or `--lang de` overrides detection for that launch.
+A small USB-powered rotary controller for Sonos. Turn to adjust volume; press
+to control playback. Set up Wi-Fi and choose a room in the English/German Windows
+assistant. The controller then works independently of your PC.
 
-## Quick start
+**Version 1.2.0 supports only the diymore ESP32-S3 Mini with 8 MB flash and 8 MB
+PSRAM.** The large 16 MB DevKit board from v1 is no longer supported by this release.
+No battery, external status LED, bridge, display or 3D-print files are required.
 
-1. Run **SonosDial-Setup-1.0-Windows.exe** and launch SonosDial. No separate Python installation, browser or internet connection is required for setup. The installer is unsigned.
-2. Connect the board using a **USB data cable** and its native **USB / OTG** port. If there are two sockets, follow the actual board labels rather than the schematic illustration; avoid UART for USB configuration.
-3. Select the board and install firmware 1.0. Checksums, the ESP32-S3 chip and 16 MB flash are checked before writing. Existing SonosDial settings are preserved by writing separate firmware areas and leaving NVS untouched.
-4. Choose your **2.4 GHz Wi-Fi** and enter its password, or start WPS in the assistant and press the WPS button on your router. The computer stays on its normal network; configuration travels over USB.
-5. Select a Sonos room and save. The final page explains the controls. You can then power the controller from a suitable 5 V USB adapter.
+[Download releases](https://github.com/karlknall/SonosDial/releases) ·
+[Test coverage](tests/README.md)
 
-If flashing fails: hold BOOT, briefly press RESET, then release BOOT. Refresh the USB port and retry. The port may change after reset. Once firmware 1.0 is detected, settings can be changed without flashing again.
+## Hardware
+
+* diymore ESP32-S3 Mini: 8 MB flash, 8 MB PSRAM, one USB-C port, external U.FL antenna
+* KY-040 rotary encoder with built-in push button
+* USB data cable for setup; regulated 5 V USB supply rated at least 1 A for operation
+* Five wires; attach the board's supplied Wi-Fi antenna before use
+
+The advertised board measures about 21 × 18 mm. Antenna and wiring need extra
+space. Similar-looking C3/C6/S3 boards are not automatically interchangeable.
 
 ## Wiring
 
-**Disconnect USB before wiring. Connect KY-040 power to 3V3, never 5V.** Use GPIO labels, not counted connector positions on a clone board.
+Disconnect USB before wiring. Use the **GPIO number**, not the physical pin count.
 
-| KY-040 | ESP32-S3 |
-|---|---|
-| CLK | GPIO4 / 4 |
-| DT | GPIO5 / 5 |
-| SW | GPIO6 / 6 |
-| + | 3V3 |
-| GND | GND / G |
+| KY-040 terminal | Mini-board pin label | Physical GPIO |
+|---|---|---|
+| CLK | D3 / A3 | GPIO4 |
+| DT | D4 / A4 / SDA | GPIO5 |
+| SW | D5 / A5 / SCL | GPIO6 |
+| + | 3V3 | 3.3 V supply |
+| GND | GND | Ground |
 
-The push button is already built into the KY-040. USB powers both components. These GPIOs follow the [Espressif reference pinout](https://docs.espressif.com/projects/esp-idf/en/v4.4.8/esp32s3/hw-reference/esp32s3/user-guide-devkitc-1.html). No cable connects the ESP32 to Sonos; they communicate through your reachable home LAN.
+**Never connect KY-040 + to 5 V.** Its pull-ups must use 3.3 V to protect the ESP
+inputs. D4 means GPIO5 on this board. Check the seller's pinout if labels differ.
+Do not connect anything to the battery pads for this USB-only version.
+
+## Install and set up
+
+1. Download **SonosDial-Setup-1.2.0-Windows.exe** from the release assets and run it.
+2. Connect the mini board's USB-C port to your Windows PC with a data cable.
+3. Follow the four steps: Connect → Install → Connect Wi-Fi → Choose a room.
+4. Join your 2.4 GHz home Wi-Fi with a password or WPS, then select a Sonos room.
+5. Keep USB power connected. A USB wall supply can replace the PC afterward.
+
+The assistant contains firmware and flashing tools; end users do not need Python,
+PlatformIO, a terminal or a browser. Firmware checksums, ESP32-S3 chip and exactly
+8 MB flash are checked before writing. This does not prove a board's brand or
+PSRAM size: use the specified hardware. The installer is **not digitally signed**.
+
+If no serial port appears: hold BOOT, tap RESET, release BOOT, then Refresh.
+The COM port can change after reset. Close other serial monitors.
 
 ## Controls
 
-| Gesture | Action |
+| Action | Result |
 |---|---|
-| Turn right | Volume up |
-| Turn left | Volume down |
-| Press once | Play/pause |
+| Turn clockwise | Louder |
+| Turn counterclockwise | Quieter |
+| Press once | Play / pause |
 | Press twice | Next track |
 | Press three times | Previous track |
-| Hold for 2 seconds | Mute/unmute |
+| Hold at least 2 seconds | No playback command; release is suppressed |
 
-Single and double clicks wait up to 350 ms after the last release for another click. Holding triggers once and does not also trigger a click on release. Unknown playback states do not result in a guessed command. Radio, TV, AirPlay and some music services may reject track changes or pause.
+Presses are debounced for 25 ms. Leave less than about 350 ms between successive
+clicks. Single/double actions wait for the multi-click window. Triple executes
+on release. Skipping depends on the current Sonos source (for example radio may
+not support Next/Previous).
 
-## Rooms, groups and settings
+New configurations use reversed encoder direction by default, matching the user's
+tested mini/KY-040 wiring. Saved direction preferences are preserved on upgrade.
+Other encoder batches can differ; change Reverse direction in More settings.
+Default volume step is 2, adjustable 1–5; detent decoding supports 2 or 4 edges.
 
-The fixed room is saved by UUID. **Follow the music** selects the only group currently playing; when several groups or none are playing, the fixed room is used. If no valid room is available, no arbitrary group is selected.
+## Rooms and groups
 
-Existing Sonos groups are controlled through their coordinator. Volume/mute may apply to the whole group or the chosen room; transport commands always target the coordinator. This firmware does not create or split groups. Invisible stereo/home-theater satellites are not offered as individual rooms.
+Choose a fixed room, optionally control its current group's volume, or enable
+Follow the music. Smart selection uses the single playing group; if ambiguous or
+idle, it falls back to the selected room. Playback goes to the group coordinator.
+The app does not create new Sonos groups. Discovery uses SSDP and local SOAP.
+If multicast discovery fails, enter a Sonos IP in More settings. The controller
+and Sonos must be reachable on the same home network, not an isolated guest WLAN.
 
-**More settings** contains rotation direction, volume step (1–5), encoder transitions per detent (2 or 4) and an optional Sonos IP address. Settings apply without rebooting and remain on the device after power is removed. New Wi-Fi credentials are saved only after a confirmed connection. A failed attempt restores the previously saved connection. Changing to a different Wi-Fi network clears the room/IP selection so it can be chosen again.
+Wi-Fi and room settings remain stored across power loss. USB setup is the main
+route; a German local web fallback is also included. Hold the encoder button
+while resetting to open setup mode. Normal long-hold gestures remain inactive.
 
-The encoder is read in its own task. Network delays do not block sampling. Pending turns and button actions are bounded; old commands are discarded rather than replayed after an outage. Ambiguous next/relative-volume results are not retried automatically. Intelligent selection needs extra LAN requests and can be slower in large households.
+## Upgrade from the mini test build
 
-## Language and optional web fallback
+Install 1.2.0 and explicitly install its firmware on the mini. Existing compatible
+SonosDial Wi-Fi, room, encoder and direction settings are preserved. The firmware
+write excludes NVS. Do not erase flash if you want to keep those settings.
+Old 16 MB board owners must keep the old v1 software; do not use this release.
 
-The assistant UI, setup help and known firmware error messages are localized on the PC. SSIDs, passwords and Sonos room names are never translated. Only the UI language is stored on the PC; Wi-Fi credentials remain on the ESP32. Raw diagnostic logs may retain their original language.
+## Test status and limits
 
-The optional local page at `http://sonosdial.local` remains **German** in firmware 1.0. It is not needed for normal USB setup. This localization update deliberately leaves the working firmware byte-for-byte unchanged, so the controller does not need reflashing. The page uses local HTTP and a form token, not an administrator login; NVS is not encrypted. Use a trusted home network. Guest-network/client-isolation/VLAN rules can prevent discovery.
+The user reported the preceding mini firmware working and needing direction
+reversal. Version 1.2.0 makes that the default for new setups and adds branding.
+This report is not a claim that every Sonos model, WPS, groups or gesture was
+individually tested on hardware. See tests/README.md.
 
-For updates use the assistant. The separate factory image written at address zero can clear NVS because it includes gaps; the assistant instead writes at 0 / 0x8000 / 0xe000 / 0x10000 and skips the NVS area at 0x9000–0xdfff.
+## Privacy, source and licenses
 
-## Tested setup and limits
+No cloud account or telemetry is required by SonosDial. Wi-Fi credentials are
+stored on the controller; this is a trusted-home-LAN project, not an Internet
+service. Do not expose its web interface to the Internet. Wi-Fi credentials are stored on the controller without flash encryption; physical access can expose them.
 
-The user reported “works” on **Windows 11 Home, Sonos Five and FRITZ!Box 7590**. WPS, groups and individual gesture cases were not separately confirmed as hardware tests. Windows 10 is a target, not an independently confirmed test setup. See [hardware tests](HARDWARE-TESTS.md), [known issues](KNOWN-ISSUES.md) and [test report](TESTPROTOKOLL.md).
+Own firmware and logo: MIT. Combined Windows assistant: GPL-3.0-or-later.
+Dependencies retain their original licenses; see LICENSE and THIRD-PARTY-NOTICES.md.
+The **SonosDial-Source-1.2.0.zip release asset** supplies the complete corresponding
+source, original notices and replaceable LGPL firmware link inputs. The installer
+includes complete corresponding source as well. Keep source and licenses with redistributions.
 
-The bilingual package includes 20 Python tests, native firmware logic tests, packaged/installed self-tests and a byte-identical firmware relink test. A cleaned process environment is not a fresh Windows VM. No security audit or universal compatibility claim is made.
-
-## Source, licensing and publication
-
-Desktop assistant: **GPL-3.0-or-later**. Own firmware application: **MIT**. Dependencies retain their original licenses. Full original license texts are preserved under `licenses`; no legal text is translated or replaced. See [LICENSE](LICENSE), [third-party notices](THIRD-PARTY-NOTICES.md) and [build instructions](BUILDING.md).
-
-The installer includes its complete companion source archive, including upstream GPL sources and LGPL object files, libraries and source for replacement/relinking. Distribute the installer, source archive and checksum file together. This package was prepared locally; nothing has been uploaded.
+The lean GitHub checkout excludes generated binaries and SDK link archives; it is
+for development. Use the full release source asset for offline packaging/relinking.
+See tools/README.md. SonosDial is an independent project, not affiliated with or
+endorsed by Sonos. Sonos trademarks belong to their respective owners.

@@ -1,0 +1,9 @@
+SonosDial 1.2.0 — desktop assistant: GPL-3.0-or-later.
+Own firmware application: MIT. Dependencies retain original terms.
+
+See Documentation/THIRD-PARTY-NOTICES.md and Licenses/Lizenzen for
+original legal texts. Corresponding source, build scripts, LGPL objects
+and relink instructions are included in Sources/Quellen as the complete
+SonosDial-Source-1.2.0.zip archive. Original license texts are unchanged.
+
+No official Sonos affiliation. Installer unsigned.

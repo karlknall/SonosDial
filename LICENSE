@@ -1,4 +1,4 @@
-SonosDial 1.0 — license scope
+SonosDial 1.2.0 — license scope
 
 The Windows assistant (installer/app.py, installer/device.py and installer/i18n.py),
 including its integrated use of esptool, is distributed under GPL-3.0-or-later.
@@ -6,11 +6,12 @@ Full license: licenses/GPL-3.0.txt. Corresponding source and build scripts are
 included, and the complete companion source archive is installed with the app.
 
 The project's own ESP32 firmware application, documentation and remaining own
-helper scripts are MIT-licensed: licenses/MIT-SonosDial.txt.
+helper scripts and original logo assets are MIT-licensed: licenses/MIT-SonosDial.txt.
 
 Third-party components retain their original licenses and copyright notices.
 Arduino-ESP32: LGPL-2.1-or-later, with source, replaceable objects/archives and
-a tested relink recipe under firmware-relink. TinyXML2: zlib. ArduinoJson: MIT.
+a tested relink recipe under firmware-relink in the full release source asset.
+TinyXML2: zlib. ArduinoJson: MIT.
 See THIRD-PARTY-NOTICES.md for the complete mapping.
 
 The earlier MIT notice for the assistant's own source is preserved for historical

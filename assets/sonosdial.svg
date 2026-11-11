@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="SonosDial rotary knob and sound waves">
+ <rect width="512" height="512" rx="108" fill="#151719"/>
+ <circle cx="216" cy="256" r="126" fill="none" stroke="#f8faf9" stroke-width="24"/>
+ <path d="M250 222L288 184" stroke="#60dac6" stroke-width="28" stroke-linecap="round"/>
+ <path d="M380 218Q410 256 380 294M420 183Q476 256 420 329" fill="none" stroke="#60dac6" stroke-width="18" stroke-linecap="round"/>
+</svg>
